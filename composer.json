@@ -1,0 +1,91 @@
+{
+    "name": "svidskiy/laravel-modulith",
+    "description": "Vertical Slice Architecture for Laravel – group your code by business feature, scale to hundreds of models without losing your mind.",
+    "keywords": [],
+    "homepage": "https://github.com/svidskiy/laravel-modulith",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Vlad Svidskiy",
+            "email": "svidskiy.vlad@gmail.com",
+            "homepage": "https://github.com/svidskiy",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/svidskiy/laravel-modulith/issues",
+        "source": "https://github.com/svidskiy/laravel-modulith"
+    },
+    "require": {
+        "php": "^8.3",
+        "illuminate/console": "^12.0 || ^13.0",
+        "illuminate/contracts": "^12.0 || ^13.0",
+        "illuminate/filesystem": "^12.0 || ^13.0",
+        "illuminate/support": "^12.0 || ^13.0"
+    },
+    "require-dev": {
+        "barryvdh/laravel-ide-helper": "^3.7",
+        "driftingly/rector-laravel": "^2.0",
+        "larastan/larastan": "^3.9",
+        "laravel/pint": "^1.27",
+        "orchestra/testbench": "^10.0 || ^11.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "pestphp/pest-plugin-type-coverage": "^4.0",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "rector/rector": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Svidskiy\\Modulith\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Svidskiy\\Modulith\\Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": "@prepare",
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "ide-helper": [
+            "@php vendor/bin/testbench ide-helper:generate --ansi",
+            "@php vendor/bin/testbench ide-helper:meta --ansi"
+        ],
+        "format": "@php vendor/bin/pint --ansi",
+        "format:test": "@php vendor/bin/pint --test --ansi",
+        "refactor": "@php vendor/bin/rector --ansi",
+        "refactor:test": "@php vendor/bin/rector --dry-run --ansi",
+        "analyse": "@php vendor/bin/phpstan analyse --ansi --memory-limit=2G",
+        "test:unit": "@php vendor/bin/pest --colors=always",
+        "test:coverage": "@php vendor/bin/pest --coverage --min=80 --colors=always",
+        "test:types": "@php vendor/bin/pest --type-coverage --min=100 --colors=always",
+        "test": [
+            "@format:test",
+            "@refactor:test",
+            "@analyse",
+            "@test:unit"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Svidskiy\\Modulith\\ModulithServiceProvider"
+            ],
+            "aliases": {
+                "Modulith": "Svidskiy\\Modulith\\Facades\\Modulith"
+            }
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "prefer-stable": true
+}
