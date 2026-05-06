@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Svidskiy\Modulith\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Filesystem\Filesystem;
 
 final class MakeCommand extends Command
@@ -25,17 +26,17 @@ final class MakeCommand extends Command
         'routes',
     ];
 
-    public function handle(Filesystem $files): int
+    public function handle(Filesystem $files, Repository $config): int
     {
-        $name = (string) $this->argument('name');
+        $name = $this->argument('name');
 
-        if (preg_match('/^[A-Z][A-Za-z0-9]*$/', $name) !== 1) {
+        if (! is_string($name) || preg_match('/^[A-Z][A-Za-z0-9]*$/', $name) !== 1) {
             $this->components->error('Module name must be StudlyCase.');
 
             return self::FAILURE;
         }
 
-        $base = base_path((string) config('modulith.path', 'modules')).'/'.$name;
+        $base = base_path($config->string('modulith.path', 'modules')).'/'.$name;
 
         if ($files->isDirectory($base) && $this->option('force') !== true) {
             $this->components->error(sprintf('Module [%s] already exists at %s.', $name, $base));

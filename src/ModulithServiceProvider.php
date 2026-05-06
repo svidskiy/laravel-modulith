@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Svidskiy\Modulith;
 
+use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
@@ -94,13 +95,15 @@ final class ModulithServiceProvider extends ServiceProvider
     private function registerRepository(): void
     {
         $this->app->singleton(ModuleRepository::class, static function (Application $app): ModuleRepository {
+            $config = $app->make(ConfigRepository::class);
+
             $base = new FilesystemModuleRepository(
                 $app->make(Filesystem::class),
-                $app->basePath((string) config('modulith.path', 'modules')),
-                (string) config('modulith.namespace', 'Modules'),
+                $app->basePath($config->string('modulith.path', 'modules')),
+                $config->string('modulith.namespace', 'Modules'),
             );
 
-            if (! (bool) config('modulith.cache.enabled', true)) {
+            if (! $config->boolean('modulith.cache.enabled', true)) {
                 return $base;
             }
 
@@ -118,10 +121,11 @@ final class ModulithServiceProvider extends ServiceProvider
     private function bootModules(): void
     {
         $repository = $this->app->make(ModuleRepository::class);
+        $config = $this->app->make(ConfigRepository::class);
 
         foreach ($repository->all() as $module) {
             foreach (self::LOADERS as $key => $loaderClass) {
-                if (! (bool) config("modulith.auto_discover.$key", true)) {
+                if (! $config->boolean("modulith.auto_discover.$key", true)) {
                     continue;
                 }
 

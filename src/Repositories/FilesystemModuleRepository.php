@@ -65,6 +65,10 @@ final class FilesystemModuleRepository implements ModuleRepository
         $modules = [];
 
         foreach ($this->files->directories($this->modulesPath) as $directory) {
+            if (! is_string($directory)) {
+                continue;
+            }
+
             $name = basename($directory);
 
             if (preg_match('/^[A-Z][A-Za-z0-9]*$/', $name) !== 1) {

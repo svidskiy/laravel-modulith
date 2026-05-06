@@ -5,16 +5,11 @@ declare(strict_types=1);
 namespace Svidskiy\Modulith\Loaders;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Application;
 use Svidskiy\Modulith\Contracts\ModuleLoader;
 use Svidskiy\Modulith\Module;
 
 final readonly class ObserverLoader implements ModuleLoader
 {
-    public function __construct(
-        private Application $app,
-    ) {}
-
     #[\Override]
     public function load(Module $module): void
     {

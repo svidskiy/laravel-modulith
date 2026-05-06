@@ -4,17 +4,12 @@ declare(strict_types=1);
 
 namespace Svidskiy\Modulith\Loaders;
 
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Gate;
 use Svidskiy\Modulith\Contracts\ModuleLoader;
 use Svidskiy\Modulith\Module;
 
 final readonly class PolicyLoader implements ModuleLoader
 {
-    public function __construct(
-        private Application $app,
-    ) {}
-
     #[\Override]
     public function load(Module $module): void
     {

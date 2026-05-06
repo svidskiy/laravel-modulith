@@ -32,7 +32,14 @@ final readonly class ConfigLoader implements ModuleLoader
         foreach (glob(sprintf('%s/config/*.php', $module->path)) ?: [] as $path) {
             $key = basename($path, '.php');
 
-            $config->set($key, array_merge(require $path, $config->get($key, [])));
+            $loaded = require $path;
+            $existing = $config->get($key, []);
+
+            if (! is_array($loaded) || ! is_array($existing)) {
+                continue;
+            }
+
+            $config->set($key, array_merge($loaded, $existing));
         }
     }
 }

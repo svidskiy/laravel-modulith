@@ -21,7 +21,7 @@ final readonly class TranslationLoader implements ModuleLoader
         $namespace = strtolower($module->name);
         $path = sprintf('%s/lang', $module->path);
 
-        $this->app->callAfterResolving('translator', static function (Translator $translator) use ($namespace, $path): void {
+        $this->app->afterResolving('translator', static function (Translator $translator) use ($namespace, $path): void {
             $translator->addNamespace($namespace, $path);
             $translator->addJsonPath($path);
         });

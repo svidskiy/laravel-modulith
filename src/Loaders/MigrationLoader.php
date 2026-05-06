@@ -20,7 +20,7 @@ final readonly class MigrationLoader implements ModuleLoader
     {
         $path = sprintf('%s/database/migrations', $module->path);
 
-        $this->app->callAfterResolving('migrator', static function (Migrator $migrator) use ($path): void {
+        $this->app->afterResolving('migrator', static function (Migrator $migrator) use ($path): void {
             $migrator->path($path);
         });
     }

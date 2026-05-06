@@ -7,7 +7,6 @@ namespace Svidskiy\Modulith\Loaders;
 use Illuminate\Console\Application as ConsoleApplication;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Artisan;
 use ReflectionClass;
 use Svidskiy\Modulith\Contracts\ModuleLoader;
 use Svidskiy\Modulith\Module;
@@ -44,7 +43,9 @@ final readonly class CommandLoader implements ModuleLoader
                 continue;
             }
 
-            Artisan::starting(static fn (ConsoleApplication $artisan) => $artisan->resolve($class));
+            ConsoleApplication::starting(static function (ConsoleApplication $artisan) use ($class): void {
+                $artisan->resolve($class);
+            });
         }
     }
 }

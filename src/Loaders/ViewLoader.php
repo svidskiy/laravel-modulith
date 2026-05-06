@@ -21,7 +21,7 @@ final readonly class ViewLoader implements ModuleLoader
         $namespace = strtolower($module->name);
         $path = sprintf('%s/resources/views', $module->path);
 
-        $this->app->callAfterResolving('view', static function (Factory $view) use ($namespace, $path): void {
+        $this->app->afterResolving('view', static function (Factory $view) use ($namespace, $path): void {
             $view->addNamespace($namespace, $path);
         });
     }
