@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Facade;
  */
 final class Modulith extends Facade
 {
+    #[\Override]
     protected static function getFacadeAccessor(): string
     {
         return \Svidskiy\Modulith\Modulith::class;

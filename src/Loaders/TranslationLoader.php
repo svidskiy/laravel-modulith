@@ -4,6 +4,25 @@ declare(strict_types=1);
 
 namespace Svidskiy\Modulith\Loaders;
 
+use Illuminate\Foundation\Application;
+use Illuminate\Translation\Translator;
 use Svidskiy\Modulith\Contracts\Loader;
+use Svidskiy\Modulith\Module;
 
-final class TranslationLoader implements Loader {}
+final readonly class TranslationLoader implements Loader
+{
+    public function __construct(
+        private Application $app,
+    ) {}
+
+    public function load(Module $module): void
+    {
+        $namespace = strtolower($module->name);
+        $path = sprintf('%s/lang', $module->path);
+
+        $this->app->callAfterResolving('translator', static function (Translator $translator) use ($namespace, $path): void {
+            $translator->addNamespace($namespace, $path);
+            $translator->addJsonPath($path);
+        });
+    }
+}

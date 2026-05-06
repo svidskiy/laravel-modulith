@@ -4,6 +4,33 @@ declare(strict_types=1);
 
 namespace Svidskiy\Modulith\Loaders;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Application;
 use Svidskiy\Modulith\Contracts\Loader;
+use Svidskiy\Modulith\Module;
 
-final class ObserverLoader implements Loader {}
+final readonly class ObserverLoader implements Loader
+{
+    public function __construct(
+        private Application $app,
+    ) {}
+
+    public function load(Module $module): void
+    {
+        foreach (glob(sprintf('%s/Observers/*Observer.php', $module->path)) ?: [] as $file) {
+            $name = basename($file, 'Observer.php');
+            $model = sprintf('%s\\Models\\%s', $module->namespace, $name);
+            $observer = sprintf('%s\\Observers\\%sObserver', $module->namespace, $name);
+
+            if (! class_exists($model) || ! class_exists($observer)) {
+                continue;
+            }
+
+            if (! is_subclass_of($model, Model::class)) {
+                continue;
+            }
+
+            $model::observe($observer);
+        }
+    }
+}
