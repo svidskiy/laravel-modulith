@@ -1,0 +1,45 @@
+# Dependencies
+
+composer.lock
+/vendor
+
+# Caches
+
+/.phpunit.cache
+/.phpstan.cache
+/.pest.cache
+/.php-cs-fixer.cache
+/.rector-cache
+
+# Build artifacts
+
+/build
+/coverage
+
+# Local overrides
+
+phpunit.xml
+phpstan.neon
+testbench.yaml
+.env
+.env.*
+!.env.example
+
+# IDE helpers
+
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
+
+# IDEs
+
+/.idea
+/.fleet
+/.vscode
+/.zed
+/.nova
+
+# OS
+
+.DS_Store
+Thumbs.db
