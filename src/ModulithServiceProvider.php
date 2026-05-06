@@ -98,9 +98,12 @@ final class ModulithServiceProvider extends ServiceProvider
         $this->app->singleton(static function (Application $app): ModuleRepository {
             $config = $app->make(ConfigRepository::class);
 
+            $path = $config->string('modulith.path', 'modules');
+            $absolutePath = str_starts_with($path, '/') ? $path : $app->basePath($path);
+
             $base = new FilesystemModuleRepository(
                 $app->make(Filesystem::class),
-                $app->basePath($config->string('modulith.path', 'modules')),
+                $absolutePath,
                 $config->string('modulith.namespace', 'Modules'),
             );
 

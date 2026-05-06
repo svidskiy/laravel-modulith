@@ -20,9 +20,9 @@ final class MakeCommand extends Command
      * @var list<string>
      */
     private const array FOLDERS = [
-        'Database/Migrations',
         'Http/Controllers',
         'Models',
+        'database/migrations',
         'routes',
     ];
 
