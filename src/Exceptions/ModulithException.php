@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 namespace Svidskiy\Modulith\Exceptions;
 
-use Exception;
+use RuntimeException;
 
-class ModulithException extends Exception {}
+abstract class ModulithException extends RuntimeException {}

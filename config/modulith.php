@@ -7,6 +7,10 @@ return [
 
     'namespace' => 'Modules',
 
+    'cache' => [
+        'enabled' => env('MODULITH_CACHE', true),
+    ],
+
     'auto_discover' => [
         'config' => true,
         'routes' => true,
@@ -19,17 +23,5 @@ return [
         'events' => true,
         'observers' => true,
         'middleware' => true,
-    ],
-
-    'default_folders' => [
-        'Models',
-        'Http/Controllers',
-        'Database/Migrations',
-        'Database/Factories',
-        'Database/Seeders',
-        'routes',
-        'resources/views',
-        'tests/Unit',
-        'tests/Feature',
     ],
 ];
