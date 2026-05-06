@@ -6,15 +6,16 @@ namespace Svidskiy\Modulith\Loaders;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Gate;
-use Svidskiy\Modulith\Contracts\Loader;
+use Svidskiy\Modulith\Contracts\ModuleLoader;
 use Svidskiy\Modulith\Module;
 
-final readonly class PolicyLoader implements Loader
+final readonly class PolicyLoader implements ModuleLoader
 {
     public function __construct(
         private Application $app,
     ) {}
 
+    #[\Override]
     public function load(Module $module): void
     {
         foreach (glob(sprintf('%s/Policies/*Policy.php', $module->path)) ?: [] as $file) {

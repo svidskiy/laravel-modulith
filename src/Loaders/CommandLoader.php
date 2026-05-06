@@ -9,16 +9,17 @@ use Illuminate\Console\Command;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Artisan;
 use ReflectionClass;
-use Svidskiy\Modulith\Contracts\Loader;
+use Svidskiy\Modulith\Contracts\ModuleLoader;
 use Svidskiy\Modulith\Module;
 use Symfony\Component\Finder\Finder;
 
-final readonly class CommandLoader implements Loader
+final readonly class CommandLoader implements ModuleLoader
 {
     public function __construct(
         private Application $app,
     ) {}
 
+    #[\Override]
     public function load(Module $module): void
     {
         if (! $this->app->runningInConsole()) {

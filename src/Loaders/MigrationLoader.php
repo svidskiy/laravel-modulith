@@ -6,15 +6,16 @@ namespace Svidskiy\Modulith\Loaders;
 
 use Illuminate\Database\Migrations\Migrator;
 use Illuminate\Foundation\Application;
-use Svidskiy\Modulith\Contracts\Loader;
+use Svidskiy\Modulith\Contracts\ModuleLoader;
 use Svidskiy\Modulith\Module;
 
-final readonly class MigrationLoader implements Loader
+final readonly class MigrationLoader implements ModuleLoader
 {
     public function __construct(
         private Application $app,
     ) {}
 
+    #[\Override]
     public function load(Module $module): void
     {
         $path = sprintf('%s/database/migrations', $module->path);

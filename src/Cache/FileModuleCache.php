@@ -64,7 +64,7 @@ final readonly class FileModuleCache implements ModuleCache
     }
 
     #[\Override]
-    public function exists(): bool
+    public function has(): bool
     {
         return $this->files->isFile($this->path);
     }

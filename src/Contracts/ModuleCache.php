@@ -18,5 +18,5 @@ interface ModuleCache
 
     public function forget(): void;
 
-    public function exists(): bool;
+    public function has(): bool;
 }

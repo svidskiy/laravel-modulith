@@ -7,10 +7,10 @@ namespace Svidskiy\Modulith\Loaders;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Application;
-use Svidskiy\Modulith\Contracts\Loader;
+use Svidskiy\Modulith\Contracts\ModuleLoader;
 use Svidskiy\Modulith\Module;
 
-final readonly class ConfigLoader implements Loader
+final readonly class ConfigLoader implements ModuleLoader
 {
     public function __construct(
         private Application $app,
@@ -19,6 +19,7 @@ final readonly class ConfigLoader implements Loader
     /**
      * @throws BindingResolutionException
      */
+    #[\Override]
     public function load(Module $module): void
     {
         if ($this->app->configurationIsCached()) {

@@ -6,7 +6,7 @@ namespace Svidskiy\Modulith\Contracts;
 
 use Svidskiy\Modulith\Module;
 
-interface Loader
+interface ModuleLoader
 {
     public function load(Module $module): void;
 }
