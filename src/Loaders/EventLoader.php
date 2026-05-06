@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Svidskiy\Modulith\Loaders;
 
 use Illuminate\Support\Facades\Event;
+use Override;
 use Svidskiy\Modulith\Contracts\ModuleLoader;
 use Svidskiy\Modulith\Module;
 
 final readonly class EventLoader implements ModuleLoader
 {
-    #[\Override]
+    #[Override]
     public function load(Module $module): void
     {
         foreach (glob(sprintf('%s/Listeners/*.php', $module->path)) ?: [] as $file) {

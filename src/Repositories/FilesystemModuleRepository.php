@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Svidskiy\Modulith\Repositories;
 
 use Illuminate\Filesystem\Filesystem;
+use Override;
 use Svidskiy\Modulith\Contracts\ModuleRepository;
 use Svidskiy\Modulith\Exceptions\InvalidModuleException;
 use Svidskiy\Modulith\Exceptions\ModuleNotFoundException;
@@ -26,13 +27,13 @@ final class FilesystemModuleRepository implements ModuleRepository
     /**
      * @return array<string, Module>
      */
-    #[\Override]
+    #[Override]
     public function all(): array
     {
         return $this->modules ??= $this->scan();
     }
 
-    #[\Override]
+    #[Override]
     public function find(string $name): ?Module
     {
         return $this->all()[$name] ?? null;
@@ -41,13 +42,13 @@ final class FilesystemModuleRepository implements ModuleRepository
     /**
      * @throws ModuleNotFoundException
      */
-    #[\Override]
+    #[Override]
     public function findOrFail(string $name): Module
     {
         return $this->find($name) ?? throw ModuleNotFoundException::forName($name);
     }
 
-    #[\Override]
+    #[Override]
     public function has(string $name): bool
     {
         return isset($this->all()[$name]);

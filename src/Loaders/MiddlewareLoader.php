@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Svidskiy\Modulith\Loaders;
 
 use Illuminate\Support\Facades\Route;
+use Override;
 use Svidskiy\Modulith\Contracts\ModuleLoader;
 use Svidskiy\Modulith\Module;
 
 final readonly class MiddlewareLoader implements ModuleLoader
 {
-    #[\Override]
+    #[Override]
     public function load(Module $module): void
     {
         $file = sprintf('%s/middleware.php', $module->path);

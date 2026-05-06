@@ -7,6 +7,7 @@ namespace Svidskiy\Modulith\Loaders;
 use Illuminate\Console\Application as ConsoleApplication;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Application;
+use Override;
 use ReflectionClass;
 use Svidskiy\Modulith\Contracts\ModuleLoader;
 use Svidskiy\Modulith\Module;
@@ -18,7 +19,7 @@ final readonly class CommandLoader implements ModuleLoader
         private Application $app,
     ) {}
 
-    #[\Override]
+    #[Override]
     public function load(Module $module): void
     {
         if (! $this->app->runningInConsole()) {

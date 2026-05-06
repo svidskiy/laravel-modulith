@@ -6,8 +6,13 @@ namespace Svidskiy\Modulith\Cache;
 
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
+use Override;
 use Svidskiy\Modulith\Contracts\ModuleCache;
+use Svidskiy\Modulith\Module;
 
+/**
+ * @phpstan-import-type ModuleArray from Module
+ */
 final readonly class FileModuleCache implements ModuleCache
 {
     public function __construct(
@@ -16,9 +21,9 @@ final readonly class FileModuleCache implements ModuleCache
     ) {}
 
     /**
-     * @return ?array<string, array<string, mixed>>
+     * @return ?array<string, ModuleArray>
      */
-    #[\Override]
+    #[Override]
     public function get(): ?array
     {
         if (! $this->files->isFile($this->path)) {
@@ -35,14 +40,14 @@ final readonly class FileModuleCache implements ModuleCache
             return null;
         }
 
-        /** @var array<string, array<string, mixed>> $data */
+        /** @var array<string, ModuleArray> $data */
         return $data;
     }
 
     /**
-     * @param  array<string, array<string, mixed>>  $modules
+     * @param  array<string, ModuleArray>  $modules
      */
-    #[\Override]
+    #[Override]
     public function put(array $modules): void
     {
         $this->files->ensureDirectoryExists(dirname($this->path));
@@ -55,7 +60,7 @@ final readonly class FileModuleCache implements ModuleCache
         $this->invalidateOpcache();
     }
 
-    #[\Override]
+    #[Override]
     public function forget(): void
     {
         $this->files->delete($this->path);
@@ -63,7 +68,7 @@ final readonly class FileModuleCache implements ModuleCache
         $this->invalidateOpcache();
     }
 
-    #[\Override]
+    #[Override]
     public function has(): bool
     {
         return $this->files->isFile($this->path);

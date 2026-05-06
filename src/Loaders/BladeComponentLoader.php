@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Svidskiy\Modulith\Loaders;
 
 use Illuminate\Support\Facades\Blade;
+use Override;
 use Svidskiy\Modulith\Contracts\ModuleLoader;
 use Svidskiy\Modulith\Module;
 
 final readonly class BladeComponentLoader implements ModuleLoader
 {
-    #[\Override]
+    #[Override]
     public function load(Module $module): void
     {
         Blade::componentNamespace(

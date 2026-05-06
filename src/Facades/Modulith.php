@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Svidskiy\Modulith\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use Override;
 use Svidskiy\Modulith\Module;
 
 /**
@@ -17,7 +18,7 @@ use Svidskiy\Modulith\Module;
  */
 final class Modulith extends Facade
 {
-    #[\Override]
+    #[Override]
     protected static function getFacadeAccessor(): string
     {
         return \Svidskiy\Modulith\Modulith::class;

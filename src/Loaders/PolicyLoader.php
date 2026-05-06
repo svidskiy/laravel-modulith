@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Svidskiy\Modulith\Loaders;
 
 use Illuminate\Support\Facades\Gate;
+use Override;
 use Svidskiy\Modulith\Contracts\ModuleLoader;
 use Svidskiy\Modulith\Module;
 
 final readonly class PolicyLoader implements ModuleLoader
 {
-    #[\Override]
+    #[Override]
     public function load(Module $module): void
     {
         foreach (glob(sprintf('%s/Policies/*Policy.php', $module->path)) ?: [] as $file) {

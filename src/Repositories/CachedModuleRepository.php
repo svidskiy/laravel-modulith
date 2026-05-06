@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace Svidskiy\Modulith\Repositories;
 
+use Override;
 use Svidskiy\Modulith\Contracts\ModuleCache;
 use Svidskiy\Modulith\Contracts\ModuleRepository;
 use Svidskiy\Modulith\Exceptions\ModuleNotFoundException;
 use Svidskiy\Modulith\Module;
 
+/**
+ * @phpstan-import-type ModuleArray from Module
+ */
 final class CachedModuleRepository implements ModuleRepository
 {
     /**
@@ -24,7 +28,7 @@ final class CachedModuleRepository implements ModuleRepository
     /**
      * @return array<string, Module>
      */
-    #[\Override]
+    #[Override]
     public function all(): array
     {
         if ($this->modules !== null) {
@@ -43,7 +47,7 @@ final class CachedModuleRepository implements ModuleRepository
         return $this->modules = $fresh;
     }
 
-    #[\Override]
+    #[Override]
     public function find(string $name): ?Module
     {
         return $this->all()[$name] ?? null;
@@ -52,36 +56,33 @@ final class CachedModuleRepository implements ModuleRepository
     /**
      * @throws ModuleNotFoundException
      */
-    #[\Override]
+    #[Override]
     public function findOrFail(string $name): Module
     {
         return $this->find($name) ?? throw ModuleNotFoundException::forName($name);
     }
 
-    #[\Override]
+    #[Override]
     public function has(string $name): bool
     {
         return isset($this->all()[$name]);
     }
 
     /**
-     * @param  array<string, array<string, mixed>>  $data
+     * @param  array<string, ModuleArray>  $data
      * @return array<string, Module>
      */
     private function hydrate(array $data): array
     {
         return array_map(
-            static function (array $row): Module {
-                /** @var array{name: string, path: string, namespace: string} $row */
-                return Module::fromArray($row);
-            },
+            Module::fromArray(...),
             $data,
         );
     }
 
     /**
      * @param  array<string, Module>  $modules
-     * @return array<string, array{name: string, path: string, namespace: string}>
+     * @return array<string, ModuleArray>
      */
     private function serialize(array $modules): array
     {

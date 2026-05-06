@@ -6,6 +6,7 @@ namespace Svidskiy\Modulith\Loaders;
 
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Foundation\Application;
+use Override;
 use Svidskiy\Modulith\Contracts\ModuleLoader;
 use Svidskiy\Modulith\Module;
 
@@ -15,7 +16,7 @@ final readonly class ViewLoader implements ModuleLoader
         private Application $app,
     ) {}
 
-    #[\Override]
+    #[Override]
     public function load(Module $module): void
     {
         $namespace = strtolower($module->name);

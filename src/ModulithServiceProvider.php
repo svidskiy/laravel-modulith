@@ -8,6 +8,7 @@ use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
+use Override;
 use Svidskiy\Modulith\Cache\FileModuleCache;
 use Svidskiy\Modulith\Commands\CacheCommand;
 use Svidskiy\Modulith\Commands\ClearCommand;
@@ -50,7 +51,7 @@ final class ModulithServiceProvider extends ServiceProvider
         'middleware' => MiddlewareLoader::class,
     ];
 
-    #[\Override]
+    #[Override]
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/modulith.php', 'modulith');
@@ -94,7 +95,7 @@ final class ModulithServiceProvider extends ServiceProvider
 
     private function registerRepository(): void
     {
-        $this->app->singleton(ModuleRepository::class, static function (Application $app): ModuleRepository {
+        $this->app->singleton(static function (Application $app): ModuleRepository {
             $config = $app->make(ConfigRepository::class);
 
             $base = new FilesystemModuleRepository(

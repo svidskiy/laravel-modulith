@@ -7,6 +7,7 @@ namespace Svidskiy\Modulith\Loaders;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Foundation\Application;
+use Override;
 use Svidskiy\Modulith\Contracts\ModuleLoader;
 use Svidskiy\Modulith\Module;
 
@@ -19,7 +20,7 @@ final readonly class ConfigLoader implements ModuleLoader
     /**
      * @throws BindingResolutionException
      */
-    #[\Override]
+    #[Override]
     public function load(Module $module): void
     {
         if ($this->app->configurationIsCached()) {
@@ -34,8 +35,10 @@ final readonly class ConfigLoader implements ModuleLoader
 
             $loaded = require $path;
             $existing = $config->get($key, []);
-
-            if (! is_array($loaded) || ! is_array($existing)) {
+            if (! is_array($loaded)) {
+                continue;
+            }
+            if (! is_array($existing)) {
                 continue;
             }
 

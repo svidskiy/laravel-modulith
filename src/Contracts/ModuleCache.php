@@ -4,15 +4,20 @@ declare(strict_types=1);
 
 namespace Svidskiy\Modulith\Contracts;
 
+use Svidskiy\Modulith\Module;
+
+/**
+ * @phpstan-import-type ModuleArray from Module
+ */
 interface ModuleCache
 {
     /**
-     * @return ?array<string, array<string, mixed>>
+     * @return ?array<string, ModuleArray>
      */
     public function get(): ?array;
 
     /**
-     * @param  array<string, array<string, mixed>>  $modules
+     * @param  array<string, ModuleArray>  $modules
      */
     public function put(array $modules): void;
 

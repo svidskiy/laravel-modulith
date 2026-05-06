@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Svidskiy\Modulith;
 
+/**
+ * @phpstan-type ModuleArray array{name: string, path: string, namespace: string}
+ */
 final readonly class Module
 {
     public function __construct(
@@ -13,7 +16,7 @@ final readonly class Module
     ) {}
 
     /**
-     * @return array{name: string, path: string, namespace: string}
+     * @return ModuleArray
      */
     public function toArray(): array
     {
@@ -25,7 +28,7 @@ final readonly class Module
     }
 
     /**
-     * @param  array{name: string, path: string, namespace: string}  $data
+     * @param  ModuleArray  $data
      */
     public static function fromArray(array $data): self
     {
