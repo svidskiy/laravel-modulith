@@ -37,14 +37,9 @@ final class CachedModuleRepository implements ModuleRepository
 
         $cached = $this->cache->get();
 
-        if ($cached !== null) {
-            return $this->modules = $this->hydrate($cached);
-        }
-
-        $fresh = $this->inner->all();
-        $this->cache->put($this->serialize($fresh));
-
-        return $this->modules = $fresh;
+        return $this->modules = $cached !== null
+            ? $this->hydrate($cached)
+            : $this->inner->all();
     }
 
     #[Override]
@@ -77,18 +72,6 @@ final class CachedModuleRepository implements ModuleRepository
         return array_map(
             Module::fromArray(...),
             $data,
-        );
-    }
-
-    /**
-     * @param  array<string, Module>  $modules
-     * @return array<string, ModuleArray>
-     */
-    private function serialize(array $modules): array
-    {
-        return array_map(
-            static fn (Module $module): array => $module->toArray(),
-            $modules,
         );
     }
 }

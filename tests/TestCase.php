@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Svidskiy\Modulith\Tests;
 
-use Orchestra\Testbench\Concerns\WithWorkbench;
-use Orchestra\Testbench\TestCase as BaseTestCase;
+use PHPUnit\Framework\TestCase as BaseTestCase;
 
-abstract class TestCase extends BaseTestCase
-{
-    use WithWorkbench;
-}
+abstract class TestCase extends BaseTestCase {}
