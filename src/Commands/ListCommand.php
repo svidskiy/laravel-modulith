@@ -9,7 +9,7 @@ use Svidskiy\Modulith\Contracts\ModuleRepository;
 
 final class ListCommand extends Command
 {
-    protected $signature = 'module:list';
+    protected $signature = 'modulith:list';
 
     protected $description = 'List all registered modules.';
 

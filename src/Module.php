@@ -15,27 +15,15 @@ final readonly class Module
         public string $namespace,
     ) {}
 
-    /**
-     * @return ModuleArray
-     */
+    /** @return ModuleArray */
     public function toArray(): array
     {
-        return [
-            'name' => $this->name,
-            'path' => $this->path,
-            'namespace' => $this->namespace,
-        ];
+        return (array) $this;
     }
 
-    /**
-     * @param  ModuleArray  $data
-     */
+    /** @param ModuleArray $data */
     public static function fromArray(array $data): self
     {
-        return new self(
-            name: $data['name'],
-            path: $data['path'],
-            namespace: $data['namespace'],
-        );
+        return new self(...$data);
     }
 }
