@@ -10,7 +10,7 @@ use Illuminate\Filesystem\Filesystem;
 
 final class MakeCommand extends Command
 {
-    protected $signature = 'modulith:make
+    protected $signature = 'make:module
                             {name : The module name in StudlyCase}
                             {--force : Overwrite an existing module}';
 

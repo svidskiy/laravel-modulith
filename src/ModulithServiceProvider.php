@@ -69,7 +69,7 @@ final class ModulithServiceProvider extends ServiceProvider
 
             $this->commands(self::COMMANDS);
 
-            $this->optimizes(optimize: 'modulith:cache', clear: 'modulith:clear');
+            $this->optimizes(optimize: 'module:cache', clear: 'module:clear');
         }
 
         $this->loadModules();

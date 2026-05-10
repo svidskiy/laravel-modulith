@@ -19,7 +19,7 @@ php artisan modulith:install
 ## Create a module
 
 ```bash
-php artisan module:make Billing
+php artisan make:module Billing
 ```
 
 Scaffolds `modules/Billing/`:
@@ -38,7 +38,7 @@ Anything you drop inside is auto-loaded — no manual provider registration.
 
 | Command | Purpose |
 | --- | --- |
-| `module:make {name}` | Scaffold a new module |
+| `make:module {name}` | Scaffold a new module |
 | `module:list` | Show registered modules |
 | `module:cache` | Cache the module manifest |
 | `module:clear` | Drop the cache |

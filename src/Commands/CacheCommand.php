@@ -11,7 +11,7 @@ use Svidskiy\Modulith\Module;
 
 final class CacheCommand extends Command
 {
-    protected $signature = 'modulith:cache';
+    protected $signature = 'module:cache';
 
     protected $description = 'Cache the discovered modules manifest.';
 

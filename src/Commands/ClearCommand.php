@@ -9,7 +9,7 @@ use Svidskiy\Modulith\Contracts\ModuleCache;
 
 final class ClearCommand extends Command
 {
-    protected $signature = 'modulith:clear';
+    protected $signature = 'module:clear';
 
     protected $description = 'Remove the modules manifest cache.';
 
