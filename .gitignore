@@ -3,41 +3,31 @@
 composer.lock
 /vendor
 
-# Caches
+# Generated
 
 /.phpunit.cache
-/.phpstan.cache
 /.pest.cache
-/.php-cs-fixer.cache
+/.phpstan.cache
 /.rector-cache
-
-# Build artifacts
-
-/build
+/.pint.cache
 /coverage
 
-# Local overrides
+# Overrides
 
 phpunit.xml
 phpstan.neon
 testbench.yaml
+
+# Secrets
+
 .env
 .env.*
 !.env.example
 
-# IDE helpers
-
-_ide_helper.php
-_ide_helper_models.php
-.phpstorm.meta.php
-
 # IDEs
 
 /.idea
-/.fleet
 /.vscode
-/.zed
-/.nova
 
 # OS
 
