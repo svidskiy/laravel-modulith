@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Svidskiy\Modulith;
 
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\ServiceProvider;
 use Override;
 use Svidskiy\Modulith\Commands\CacheCommand;
@@ -13,7 +14,6 @@ use Svidskiy\Modulith\Commands\InstallCommand;
 use Svidskiy\Modulith\Commands\ListCommand;
 use Svidskiy\Modulith\Commands\MakeCommand;
 use Svidskiy\Modulith\Contracts\ModuleLoader;
-use Svidskiy\Modulith\Contracts\ModuleRepository;
 use Svidskiy\Modulith\Loaders\BladeComponentLoader;
 use Svidskiy\Modulith\Loaders\CommandLoader;
 use Svidskiy\Modulith\Loaders\ConfigLoader;
@@ -28,19 +28,21 @@ use Svidskiy\Modulith\Loaders\ViewLoader;
 
 final class ModulithServiceProvider extends ServiceProvider
 {
-    /** @var array<string, class-string<ModuleLoader>> */
+    public const string LOADERS_TAG = 'modulith.loaders';
+
+    /** @var list<class-string<ModuleLoader>> */
     private const array LOADERS = [
-        'config' => ConfigLoader::class,
-        'routes' => RouteLoader::class,
-        'views' => ViewLoader::class,
-        'translations' => TranslationLoader::class,
-        'migrations' => MigrationLoader::class,
-        'commands' => CommandLoader::class,
-        'blade_components' => BladeComponentLoader::class,
-        'policies' => PolicyLoader::class,
-        'events' => EventLoader::class,
-        'observers' => ObserverLoader::class,
-        'middleware' => MiddlewareLoader::class,
+        ConfigLoader::class,
+        RouteLoader::class,
+        ViewLoader::class,
+        TranslationLoader::class,
+        MigrationLoader::class,
+        CommandLoader::class,
+        BladeComponentLoader::class,
+        PolicyLoader::class,
+        EventLoader::class,
+        ObserverLoader::class,
+        MiddlewareLoader::class,
     ];
 
     /** @var list<class-string<Command>> */
@@ -57,9 +59,12 @@ final class ModulithServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom($this->configPath(), 'modulith');
 
-        $this->app->singleton(Modulith::class);
+        $this->app->tag(self::LOADERS, self::LOADERS_TAG);
     }
 
+    /**
+     * @throws BindingResolutionException
+     */
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
@@ -75,17 +80,17 @@ final class ModulithServiceProvider extends ServiceProvider
         $this->loadModules();
     }
 
+    /**
+     * @throws BindingResolutionException
+     */
     private function loadModules(): void
     {
-        $modules = app(ModuleRepository::class)->all();
+        $modules = $this->app->make(ModuleRepository::class)->all();
 
-        foreach (self::LOADERS as $key => $class) {
-            if (! config("modulith.auto_discover.$key", true)) {
-                continue;
-            }
+        /** @var iterable<ModuleLoader> $loaders */
+        $loaders = $this->app->tagged(self::LOADERS_TAG);
 
-            $loader = app($class);
-
+        foreach ($loaders as $loader) {
             foreach ($modules as $module) {
                 $loader->load($module);
             }
