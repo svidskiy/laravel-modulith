@@ -4,26 +4,30 @@ declare(strict_types=1);
 
 namespace Svidskiy\Modulith\Cache;
 
+use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
-use Override;
-use Svidskiy\Modulith\Contracts\ModuleCache;
 use Svidskiy\Modulith\Module;
 
 /**
  * @phpstan-import-type ModuleArray from Module
  */
-final readonly class FileModuleCache implements ModuleCache
+#[Singleton]
+final readonly class FileModuleCache
 {
+    private string $path;
+
     public function __construct(
         private Filesystem $files,
-        private string $path,
-    ) {}
+        Application $app,
+    ) {
+        $this->path = $app->bootstrapPath('cache/modulith.php');
+    }
 
     /**
      * @return ?array<string, ModuleArray>
      */
-    #[Override]
     public function get(): ?array
     {
         if (! $this->files->isFile($this->path)) {
@@ -47,7 +51,6 @@ final readonly class FileModuleCache implements ModuleCache
     /**
      * @param  array<string, ModuleArray>  $modules
      */
-    #[Override]
     public function put(array $modules): void
     {
         $this->files->ensureDirectoryExists(dirname($this->path));
@@ -60,7 +63,6 @@ final readonly class FileModuleCache implements ModuleCache
         $this->invalidateOpcache();
     }
 
-    #[Override]
     public function forget(): void
     {
         $this->files->delete($this->path);
@@ -68,7 +70,6 @@ final readonly class FileModuleCache implements ModuleCache
         $this->invalidateOpcache();
     }
 
-    #[Override]
     public function has(): bool
     {
         return $this->files->isFile($this->path);

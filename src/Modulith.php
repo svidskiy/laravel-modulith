@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Svidskiy\Modulith;
 
-use Svidskiy\Modulith\Contracts\ModuleRepository;
+use Illuminate\Container\Attributes\Singleton;
 use Svidskiy\Modulith\Exceptions\ModuleNotFoundException;
 
+#[Singleton]
 final readonly class Modulith
 {
     public function __construct(

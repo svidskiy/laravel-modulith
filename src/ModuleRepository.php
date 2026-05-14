@@ -2,38 +2,55 @@
 
 declare(strict_types=1);
 
-namespace Svidskiy\Modulith\Repositories;
+namespace Svidskiy\Modulith;
 
+use Illuminate\Container\Attributes\Config;
+use Illuminate\Container\Attributes\Singleton;
 use Illuminate\Filesystem\Filesystem;
-use Override;
-use Svidskiy\Modulith\Contracts\ModuleRepository;
+use Svidskiy\Modulith\Cache\FileModuleCache;
 use Svidskiy\Modulith\Exceptions\InvalidModuleException;
 use Svidskiy\Modulith\Exceptions\ModuleNotFoundException;
-use Svidskiy\Modulith\Module;
 
-final class FilesystemModuleRepository implements ModuleRepository
+#[Singleton]
+final class ModuleRepository
 {
-    /**
-     * @var ?array<string, Module>
-     */
+    /** @var ?array<string, Module> */
     private ?array $modules = null;
+
+    private readonly string $modulesPath;
 
     public function __construct(
         private readonly Filesystem $files,
-        private readonly string $modulesPath,
-        private readonly string $namespacePrefix,
-    ) {}
+        private readonly FileModuleCache $cache,
+        #[Config('modulith.path', 'modules')] string $path,
+        #[Config('modulith.namespace', 'Modules')] private readonly string $namespacePrefix,
+        #[Config('modulith.cache.enabled', true)] private readonly bool $useCache,
+    ) {
+        $this->modulesPath = base_path($path);
+    }
 
     /**
      * @return array<string, Module>
      */
-    #[Override]
     public function all(): array
     {
-        return $this->modules ??= $this->scan();
+        if ($this->modules !== null) {
+            return $this->modules;
+        }
+
+        if ($this->useCache && ($cached = $this->cache->get()) !== null) {
+            return $this->modules = array_map(Module::fromArray(...), $cached);
+        }
+
+        $modules = $this->scan();
+
+        if ($this->useCache) {
+            $this->cache->put(array_map(static fn (Module $m): array => $m->toArray(), $modules));
+        }
+
+        return $this->modules = $modules;
     }
 
-    #[Override]
     public function find(string $name): ?Module
     {
         return $this->all()[$name] ?? null;
@@ -42,13 +59,11 @@ final class FilesystemModuleRepository implements ModuleRepository
     /**
      * @throws ModuleNotFoundException
      */
-    #[Override]
     public function findOrFail(string $name): Module
     {
         return $this->find($name) ?? throw ModuleNotFoundException::forName($name);
     }
 
-    #[Override]
     public function has(string $name): bool
     {
         return isset($this->all()[$name]);

@@ -16,7 +16,6 @@ return RectorConfig::configure()
     ->withRootFiles()
     ->withSkip([
         sprintf('%s/vendor', __DIR__),
-        sprintf('%s/workbench', __DIR__),
     ])
     ->withPhpSets()
     ->withPreparedSets(

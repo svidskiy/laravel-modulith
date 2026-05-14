@@ -4,20 +4,16 @@ declare(strict_types=1);
 
 namespace Svidskiy\Modulith;
 
-use Illuminate\Contracts\Config\Repository as ConfigRepository;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Filesystem\Filesystem;
+use Illuminate\Console\Command;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\ServiceProvider;
 use Override;
-use Svidskiy\Modulith\Cache\FileModuleCache;
 use Svidskiy\Modulith\Commands\CacheCommand;
 use Svidskiy\Modulith\Commands\ClearCommand;
 use Svidskiy\Modulith\Commands\InstallCommand;
 use Svidskiy\Modulith\Commands\ListCommand;
 use Svidskiy\Modulith\Commands\MakeCommand;
-use Svidskiy\Modulith\Contracts\ModuleCache;
 use Svidskiy\Modulith\Contracts\ModuleLoader;
-use Svidskiy\Modulith\Contracts\ModuleRepository;
 use Svidskiy\Modulith\Loaders\BladeComponentLoader;
 use Svidskiy\Modulith\Loaders\CommandLoader;
 use Svidskiy\Modulith\Loaders\ConfigLoader;
@@ -29,112 +25,80 @@ use Svidskiy\Modulith\Loaders\PolicyLoader;
 use Svidskiy\Modulith\Loaders\RouteLoader;
 use Svidskiy\Modulith\Loaders\TranslationLoader;
 use Svidskiy\Modulith\Loaders\ViewLoader;
-use Svidskiy\Modulith\Repositories\CachedModuleRepository;
-use Svidskiy\Modulith\Repositories\FilesystemModuleRepository;
 
 final class ModulithServiceProvider extends ServiceProvider
 {
-    /**
-     * @var array<string, class-string<ModuleLoader>>
-     */
+    public const string LOADERS_TAG = 'modulith.loaders';
+
+    /** @var list<class-string<ModuleLoader>> */
     private const array LOADERS = [
-        'config' => ConfigLoader::class,
-        'routes' => RouteLoader::class,
-        'views' => ViewLoader::class,
-        'translations' => TranslationLoader::class,
-        'migrations' => MigrationLoader::class,
-        'commands' => CommandLoader::class,
-        'blade_components' => BladeComponentLoader::class,
-        'policies' => PolicyLoader::class,
-        'events' => EventLoader::class,
-        'observers' => ObserverLoader::class,
-        'middleware' => MiddlewareLoader::class,
+        ConfigLoader::class,
+        RouteLoader::class,
+        ViewLoader::class,
+        TranslationLoader::class,
+        MigrationLoader::class,
+        CommandLoader::class,
+        BladeComponentLoader::class,
+        PolicyLoader::class,
+        EventLoader::class,
+        ObserverLoader::class,
+        MiddlewareLoader::class,
+    ];
+
+    /** @var list<class-string<Command>> */
+    private const array COMMANDS = [
+        CacheCommand::class,
+        ClearCommand::class,
+        InstallCommand::class,
+        ListCommand::class,
+        MakeCommand::class,
     ];
 
     #[Override]
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/modulith.php', 'modulith');
+        $this->mergeConfigFrom($this->configPath(), 'modulith');
 
-        $this->registerCache();
-        $this->registerRepository();
-        $this->registerManager();
+        $this->app->tag(self::LOADERS, self::LOADERS_TAG);
     }
 
+    /**
+     * @throws BindingResolutionException
+     */
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../config/modulith.php' => config_path('modulith.php'),
+                $this->configPath() => config_path('modulith.php'),
             ], 'modulith-config');
 
-            $this->commands([
-                CacheCommand::class,
-                ClearCommand::class,
-                InstallCommand::class,
-                ListCommand::class,
-                MakeCommand::class,
-            ]);
+            $this->commands(self::COMMANDS);
 
-            $this->optimizes(
-                optimize: 'module:cache',
-                clear: 'module:clear',
-            );
+            $this->optimizes(optimize: 'module:cache', clear: 'module:clear');
         }
 
-        $this->bootModules();
+        $this->loadModules();
     }
 
-    private function registerCache(): void
+    /**
+     * @throws BindingResolutionException
+     */
+    private function loadModules(): void
     {
-        $this->app->singleton(ModuleCache::class, static fn (Application $app): ModuleCache => new FileModuleCache(
-            $app->make(Filesystem::class),
-            $app->bootstrapPath('cache/modulith.php'),
-        ));
-    }
+        $modules = $this->app->make(ModuleRepository::class)->all();
 
-    private function registerRepository(): void
-    {
-        $this->app->singleton(static function (Application $app): ModuleRepository {
-            $config = $app->make(ConfigRepository::class);
+        /** @var iterable<ModuleLoader> $loaders */
+        $loaders = $this->app->tagged(self::LOADERS_TAG);
 
-            $path = $config->string('modulith.path', 'modules');
-            $absolutePath = str_starts_with($path, '/') ? $path : $app->basePath($path);
-
-            $base = new FilesystemModuleRepository(
-                $app->make(Filesystem::class),
-                $absolutePath,
-                $config->string('modulith.namespace', 'Modules'),
-            );
-
-            if (! $config->boolean('modulith.cache.enabled', true)) {
-                return $base;
-            }
-
-            return new CachedModuleRepository($base, $app->make(ModuleCache::class));
-        });
-    }
-
-    private function registerManager(): void
-    {
-        $this->app->singleton(Modulith::class, static fn (Application $app): Modulith => new Modulith(
-            $app->make(ModuleRepository::class),
-        ));
-    }
-
-    private function bootModules(): void
-    {
-        $repository = $this->app->make(ModuleRepository::class);
-        $config = $this->app->make(ConfigRepository::class);
-
-        foreach ($repository->all() as $module) {
-            foreach (self::LOADERS as $key => $loaderClass) {
-                if (! $config->boolean("modulith.auto_discover.$key", true)) {
-                    continue;
-                }
-
-                $this->app->make($loaderClass)->load($module);
+        foreach ($loaders as $loader) {
+            foreach ($modules as $module) {
+                $loader->load($module);
             }
         }
+    }
+
+    private function configPath(): string
+    {
+        return sprintf('%s/../config/modulith.php', __DIR__);
     }
 }

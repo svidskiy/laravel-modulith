@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 
 final class InstallCommand extends Command
 {
-    protected $signature = 'modulith:install';
+    protected $signature = 'modulith:install {--force : Overwrite the published config}';
 
     protected $description = 'Install Modulith and publish its assets.';
 
@@ -16,9 +16,8 @@ final class InstallCommand extends Command
     {
         $this->call('vendor:publish', [
             '--tag' => 'modulith-config',
+            '--force' => (bool) $this->option('force'),
         ]);
-
-        $this->components->info('Modulith installed.');
 
         return self::SUCCESS;
     }
