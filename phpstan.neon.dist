@@ -1,12 +1,8 @@
 parameters:
 	level: max
-	phpVersion: 80300
 	paths:
 		- src
 		- config
 	tmpDir: .phpstan.cache
 	configDirectories:
 		- config
-	treatPhpDocTypesAsCertain: false
-	checkMissingOverrideMethodAttribute: true
-	checkTooWideReturnTypesInProtectedAndPublicMethods: true
